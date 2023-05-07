@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1rem;
+            background-color: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #a6a4a4;
+        }
+        .cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Adicionado para permitir que as cartas sejam exibidas em várias linhas, se necessário */
+        }
+        .card {
+            width: 400px; /* Aumentado o tamanho da carta */
+            padding: 104px;
+            margin: 0 10px;
+            text-align: center;
+        }
+        img {
+            width: 100%; /* Ajustado para 100% para que a imagem se ajuste ao tamanho da carta */
+            height: auto;
+            margin-bottom: 2px;
+        }
+        .interpretation {
+            font-size: 1rem; /* Aumentado o tamanho da fonte */
+            text-align: justify; /* Adicionado alinhamento justificado para o texto */
+        }
+    </style>
+</head>
+<body>
+    <h1>Leitura de Tarot</h1>
+    <div class="options">
+        <button onclick="drawCards(1)">Mentalize a sua pergunta e clique aqui:</button>
+        <!-- <button onclick="drawCards(3)">Escolher 3 cartas</button> -->
+    </div>
+    <div class="cards" id="cards"></div>
+
+    <script>
+
+const tarotDeck = [
+    {
+        name: 'O Louco',
+        imagePath: 'crowley/0.jpeg',
+        interpretation:
+            'Amor: esteja aberto a novas experiências e relacionamentos. Saúde: cuide de sua saúde mental e emocional. Passado: você esteve em um período de aprendizado e descoberta. Futuro: prepare-se para embarcar em uma nova jornada ou aventura. Seja espontâneo e siga seu coração. Acredite no seu potencial ilimitado e confie no desconhecido. Desapegue-se de expectativas e viva o momento presente. Esteja disposto a correr riscos e acredite em si mesmo. Aceite as mudanças e transformações que estão por vir. Lembre-se de que a vida é uma jornada de autoconhecimento e crescimento.'
+    },
+
+    {
+        name: 'O Mago',
+        imagePath: 'crowley/1.jpeg',
+        interpretation:
+            'Amor: você tem o poder de manifestar o relacionamento desejado. Saúde: use sua energia e habilidades para melhorar sua saúde física e mental. Passado: você desenvolveu habilidades e conhecimentos importantes. Futuro: você terá a oportunidade de aplicar sua vontade e habilidades para alcançar seus objetivos. Reconheça seu poder pessoal e use-o para criar a realidade desejada. Desenvolva suas habilidades e talentos. Confie em sua capacidade de superar desafios e obstáculos. Esteja aberto a novas ideias e oportunidades. Acredite que você é capaz de realizar seus sonhos e desejos. Mantenha-se focado e determinado em suas metas e objetivos.'
+    },
+
+    {
+        name: 'A Sacerdotisa',
+        imagePath: 'crowley/2.jpeg',
+        interpretation:
+            'Amor: siga sua intuição e confie em seu coração ao tomar decisões no relacionamento. Saúde: busque equilíbrio emocional e preste atenção aos sinais de seu corpo. Passado: você aprendeu lições importantes através de experiências místicas ou espirituais. Futuro: esteja atento aos segredos e mistérios que serão revelados. Confie em sua intuição e sabedoria interior. Aprenda a ouvir a voz da sua alma. Esteja aberto às mensagens e orientações do universo. Busque conhecimento oculto e explore sua espiritualidade. Desenvolva sua sensibilidade e empatia. Acredite que você tem o poder de acessar a verdade e o conhecimento profundo. Lembre-se de que o silêncio pode ser uma fonte de sabedoria e força.'
+    },
+
+    {
+    name: 'A Imperatriz',
+    imagePath: 'crowley/3.jpeg',
+    interpretation:
+        'Amor: este é um momento fértil para o crescimento e aprofundamento dos relacionamentos. Saúde: cuide do seu bem-estar físico e emocional, e conecte-se com a natureza para encontrar equilíbrio. Passado: você experimentou um período de criatividade e nutrição emocional. Futuro: esteja aberto a novas oportunidades e possibilidades em todos os aspectos da vida. Abundância e prosperidade estão a caminho. Abrace sua criatividade e permita que ela flua livremente. Esteja ciente das necessidades emocionais dos outros e seja compassivo e compreensivo. Cultive uma conexão profunda com a natureza e com seu corpo. Permita-se receber amor e nutrição dos outros. Esteja disposto a se abrir para a energia feminina e a força criativa do universo. Desfrute dos prazeres da vida e celebre a beleza que o rodeia.'
+    },
+
+    {
+        name: 'O Imperador',
+        imagePath: 'crowley/4.jpeg',
+        interpretation:
+            'Amor: estabeleça limites saudáveis ​​e proteja seu coração. Saúde: mantenha uma rotina disciplinada e foco na saúde e bem-estar geral. Passado: você desenvolveu uma base sólida e conquistou sua autoridade pessoal. Futuro: você enfrentará desafios que exigem liderança, estrutura e estabilidade. Estabeleça uma base sólida para o futuro e tome decisões firmes. Seja justo e imparcial em todas as suas ações. Use sua autoridade com sabedoria e discernimento. Defina limites claros e saudáveis ​​em seus relacionamentos. Enfrente os desafios com coragem e determinação. Desenvolva sua autoconfiança e autoestima. Lembre-se de que a verdadeira força vem de dentro e é expressa através da ação consciente e responsável. Mantenha o equilíbrio entre a autoridade e a compaixão.'
+    },
+    {
+        name: 'O Hierofante',
+        imagePath: 'crowley/5.jpeg',
+        interpretation:
+            'Amor: busque orientação espiritual ou conselhos sábios em seus relacionamentos. Saúde: siga tradições e práticas de bem-estar comprovadas para melhorar sua saúde. Passado: você foi influenciado por figuras de autoridade espiritual ou moral. Futuro: você encontrará mentores e professores que ajudarão em seu crescimento espiritual. Esteja aberto a receber orientação e conselhos de pessoas mais experientes. Aprenda com as tradições e sistemas de crenças estabelecidos. Desenvolva sua conexão com o divino e explore sua espiritualidade. Seja um líder e guia para os outros em sua jornada espiritual. Valorize a sabedoria dos antigos e respeite as tradições culturais e espirituais. Esteja disposto a compartilhar seu conhecimento e experiências com os outros. Lembre-se de que a verdadeira iluminação vem de dentro e é alcançada através da introspecção e da autorreflexão.'
+    },
+    {
+        name: 'Os Amantes',
+        imagePath: 'crowley/6.jpeg',
+        interpretation:
+            'Amor: este é um momento de união, compromisso e escolhas importantes nos relacionamentos. Saúde: busque equilíbrio e harmonia em sua vida para melhorar seu bem-estar geral. Passado: você já enfrentou escolhas importantes que moldaram sua vida amorosa e emocional. Futuro: você enfrentará decisões significativas que afetarão seu coração e alma. Faça escolhas conscientes e equilibradas em seus relacionamentos. Valorize a comunicação aberta e honesta com seu parceiro. Esteja disposto a comprometer-se e trabalhar em conjunto para resolver problemas e desafios. Confie em sua intuição e siga seu coração ao tomar decisões importantes. Aprenda com as experiências passadas e permita que elas guiem suas ações futuras. Lembre-se de que o verdadeiro amor é uma jornada de crescimento mútuo e apoio. Seja honesto consigo mesmo sobre suas necessidades e desejos emocionais.'
+    },
+
+    {
+        name: 'O Carro',
+        imagePath: 'crowley/7.jpeg',
+        interpretation:
+            'Amor: mantenha o foco e a determinação em seus relacionamentos para superar obstáculos. Saúde: esteja no controle de sua saúde e estabeleça metas claras para melhorar seu bem-estar. Passado: você já superou muitos desafios e alcançou vitórias importantes. Futuro: você enfrentará situações que exigem autocontrole, disciplina e concentração. Seja determinado e assertivo em suas ações. Mantenha o foco em seus objetivos e trabalhe de forma consistente para alcançá-los. Use sua força de vontade e autocontrole para superar desafios e obstáculos. Esteja disposto a assumir riscos calculados e a lutar pelo que acredita. Aprenda com as experiências passadas e permita que elas guiem suas ações futuras. Lembre-se de que o verdadeiro sucesso vem de dentro e é alcançado através do esforço consciente e focado.'
+    },
+    {
+        name: 'O Ajustamento',
+        imagePath: 'crowley/8.jpeg',
+        interpretation:
+            'Amor: busque equilíbrio e justiça em seus relacionamentos, e esteja disposto a comprometer-se. Saúde: encontre equilíbrio em todas as áreas da sua vida para melhorar sua saúde geral. Passado: você aprendeu lições importantes sobre equilíbrio e justiça. Futuro: você enfrentará situações que exigem tomada de decisões imparcial e equilibrada. Mantenha a harmonia e o equilíbrio em todas as áreas da sua vida. Busque justiça e imparcialidade em suas ações e decisões. Aprenda a comprometer-se e a encontrar soluções equilibradas para os conflitos. Esteja disposto a assumir responsabilidade por suas ações e a enfrentar as consequências de suas escolhas. Desenvolva sua capacidade de discernimento e sabedoria. Lembre-se de que o verdadeiro equilíbrio vem de dentro e é alcançado através da autoconsciência e da autorreflexão.'
+    },
+
+    {
+        name: 'O Eremita',
+        imagePath: 'crowley/9.jpeg',
+        interpretation:
+            'Amor: reserve tempo para a introspecção e o autoconhecimento antes de se envolver em novos relacionamentos. Saúde: busque sabedoria interior e pratique a autocompaixão para melhorar sua saúde mental e emocional. Passado: você passou por um período de isolamento e introspecção que levou a um maior autoconhecimento. Futuro: você entrará em uma fase de introspecção e autoavaliação. Dedique tempo para a reflexão e meditação. Cultive sua conexão com seu eu interior e com a sabedoria universal. Esteja disposto a compartilhar sua luz e orientação com os outros. Busque autoconhecimento e compreensão de suas motivações e desejos. Reconheça a importância do silêncio e da solidão para o crescimento pessoal. Lembre-se de que a verdadeira sabedoria vem de dentro e é alcançada através da autoconsciência e da autorreflexão.'
+    },
+
+    {
+        name: 'A Fortuna',
+        imagePath: 'crowley/10.jpeg',
+        interpretation:
+            'Amor: aceite as mudanças e incertezas nos relacionamentos e abrace as oportunidades que surgirem. Saúde: adapte-se às mudanças e mantenha-se flexível para manter um equilíbrio saudável. Passado: você passou por altos e baixos que o ensinaram a lidar com a mudança. Futuro: você enfrentará mudanças inesperadas e eventos imprevistos. Aprenda a aceitar e abraçar a mudança. Esteja disposto a se adaptar e a crescer em face da incerteza. Mantenha-se otimista e confiante em suas habilidades. Aproveite as oportunidades que surgem e confie no fluxo da vida. Desenvolva sua resiliência e capacidade de lidar com os altos e baixos. Lembre-se de que a vida é uma jornada de constante mudança e crescimento, e que o verdadeiro sucesso vem da capacidade de se adaptar e evoluir.'
+    },
+    {
+        name: 'A Luxúria',
+        imagePath: 'crowley/11.jpeg',
+        interpretation:
+            'Amor: seja apaixonado e criativo em seus relacionamentos, mas mantenha o autocontrole. Saúde: canalize sua energia e paixão para atividades saudáveis e produtivas. Passado: você aprendeu a domar seus impulsos e a usar sua força interior de forma construtiva. Futuro: você enfrentará desafios que exigem coragem, paixão e autodomínio. Cultive sua força interior e autocontrole. Use sua energia e paixão de maneira criativa e produtiva. Esteja disposto a enfrentar seus medos e superar obstáculos. Desenvolva a coragem e a confiança para enfrentar os desafios da vida. Aprenda a equilibrar a paixão com a sabedoria e a compaixão. Lembre-se de que a verdadeira força vem de dentro e é expressa através do autocontrole e do equilíbrio emocional.'
+    },
+
+    {
+        name: 'O Enforcado',
+        imagePath: 'crowley/12.jpeg',
+        interpretation:
+            'Amor: seja paciente e aceite as incertezas nos relacionamentos, permitindo que as coisas sigam seu próprio curso. Saúde: pratique a aceitação e a paciência para melhorar seu bem-estar emocional. Passado: você passou por um período de espera e sacrifício que levou a uma maior compreensão. Futuro: você enfrentará situações que exigem paciência, aceitação e sacrifício. Cultive a capacidade de ver as coisas a partir de uma perspectiva diferente. Aprenda a aceitar e abraçar as incertezas da vida. Seja paciente e permita que as coisas se desenrolem naturalmente. Pratique o desapego e a aceitação das circunstâncias que estão além do seu controle. Esteja disposto a fazer sacrifícios e a colocar as necessidades dos outros antes das suas. Desenvolva sua capacidade de empatia e compaixão. Lembre-se de que a verdadeira sabedoria vem da capacidade de ver além das aparências e de compreender a natureza interconectada de todas as coisas.'
+    },
+    {
+        name: 'A Morte',
+        imagePath: 'crowley/13.jpeg',
+        interpretation:
+            'Amor: esteja preparado para mudanças e transformações nos relacionamentos. Saúde: cuide de sua saúde e aceite as mudanças como oportunidades para renovação. Passado: você passou por momentos de transformação e renascimento que moldaram quem você é hoje. Futuro: você enfrentará mudanças significativas e transformações em sua vida. Aprenda a aceitar e abraçar a impermanência da vida. Esteja disposto a deixar ir o que não serve mais para dar lugar ao novo. Encare a mudança como uma oportunidade de crescimento e renovação. Desenvolva sua capacidade de se adaptar e evoluir em face da adversidade. Encontre beleza e significado nas transições da vida. Lembre-se de que a morte e a transformação são partes naturais da vida e do crescimento espiritual. Cultive a capacidade de renascer e se reinventar em meio às mudanças e desafios da vida.'
+    },
+    {
+        name: 'A Arte',
+        imagePath: 'crowley/14.jpeg',
+        interpretation:
+            'Amor: encontre equilíbrio e harmonia nos relacionamentos, cultivando a comunicação e a compreensão. Saúde: busque equilíbrio em sua vida, integrando aspectos físicos, emocionais e espirituais. Passado: você aprendeu a importância do equilíbrio e da harmonia em sua vida. Futuro: você enfrentará situações que exigem equilíbrio, alquimia e integração. Aprenda a harmonizar aspectos aparentemente opostos de sua vida e personalidade. Cultive a arte da paciência, da moderação e do equilíbrio. Desenvolva habilidades de comunicação e compreensão para resolver conflitos e criar harmonia. Encontre a beleza e a sabedoria na diversidade e na complexidade da vida. Aprenda a combinar e integrar diferentes aspectos de si mesmo e de sua vida em uma síntese harmoniosa. Lembre-se de que a verdadeira maestria vem da capacidade de criar equilíbrio, beleza e significado em meio à complexidade e às contradições da vida.'
+    },
+
+    {
+        name: 'O Diabo',
+        imagePath: 'crowley/15.jpeg',
+        interpretation:
+            'Amor: esteja atento a padrões de dependência e controle nos relacionamentos. Saúde: cuide de seus vícios e comportamentos autodestrutivos. Passado: você enfrentou tentações e desafios que testaram sua força de vontade e autodomínio. Futuro: você enfrentará situações que exigem autoconsciência, discernimento e liberação de padrões negativos. Reconheça e enfrente seus medos, desejos e vícios. Aprenda a discernir entre verdadeiras necessidades e desejos superficiais. Desenvolva sua força de vontade e autodomínio para resistir a tentações e influências negativas. Liberte-se de padrões de pensamento e comportamento autodestrutivos. Cultive a autoconsciência e a autenticidade em sua busca pelo crescimento pessoal e espiritual. Lembre-se de que a verdadeira liberdade vem de enfrentar e superar suas limitações e sombras internas.'
+    },
+    {
+        name: 'A Torre',
+        imagePath: 'crowley/16.jpeg',
+        interpretation:
+            'Amor: esteja preparado para mudanças súbitas e possíveis rupturas nos relacionamentos. Saúde: enfrente os desafios de saúde com coragem e resiliência. Passado: você passou por eventos súbitos e transformadores que abalaram suas crenças e estruturas. Futuro: você enfrentará mudanças repentinas e eventos inesperados que desafiam sua estabilidade. Aprenda a se adaptar e encontrar oportunidades de crescimento em meio à incerteza e ao caos. Cultive a resiliência e a coragem para enfrentar os desafios e adversidades da vida. Desenvolva a capacidade de se reerguer e reconstruir após eventos que mudam a vida. Encare a mudança e a destruição como oportunidades para a renovação e o crescimento pessoal. Lembre-se de que as verdadeiras fundações e crenças são testadas e fortalecidas em momentos de crise e transformação. Encontre força e sabedoria no caos e na incerteza.'
+    },
+
+    {
+        name: 'A Estrela',
+        imagePath: 'crowley/17.jpeg',
+        interpretation:
+            'Amor: permita-se ser guiado por esperança e otimismo nos relacionamentos. Saúde: busque inspiração e cura através da conexão com sua essência espiritual. Passado: você encontrou orientação e inspiração em momentos de escuridão e incerteza. Futuro: você será guiado pela luz da esperança, inspiração e propósito. Cultive a fé e a confiança em sua jornada espiritual e pessoal. Aprenda a se abrir para a orientação e inspiração das forças universais. Desenvolva a capacidade de ver a beleza e a magia em todos os aspectos da vida. Encontre conforto e cura na conexão com sua essência espiritual e verdadeira natureza. Busque o equilíbrio entre o material e o espiritual, honrando a sabedoria e a beleza de ambos. Lembre-se de que a verdadeira inspiração vem de estar em sintonia com sua própria luz interior e com a luz das estrelas.'
+    },
+    {
+        name: 'A Lua',
+        imagePath: 'crowley/18.jpeg',
+        interpretation:
+            'Amor: esteja atento às ilusões e aos medos que podem obscurecer a verdade nos relacionamentos. Saúde: cuide de sua saúde emocional e mental, prestando atenção aos seus sonhos e intuição. Passado: você passou por momentos de incerteza e confusão que testaram sua fé e intuição. Futuro: você enfrentará situações que exigem autoconhecimento, discernimento e conexão com sua intuição. Aprenda a navegar pelas sombras e mistérios da vida com coragem e sabedoria. Desenvolva sua intuição e habilidades psíquicas para acessar a verdade além das aparências. Enfrente seus medos e ilusões com coragem e autenticidade. Cultive a capacidade de encontrar luz e sabedoria nas profundezas de sua própria psique. Lembre-se de que a verdadeira iluminação vem de enfrentar e integrar as sombras e mistérios da vida. Encontre conforto e orientação na conexão com sua própria sabedoria e intuição.'
+    },
+
+    {
+    name: 'O Sol',
+    imagePath: 'crowley/19.jpeg',
+    interpretation:
+        'Amor: este é um momento de alegria, energia e crescimento nos relacionamentos. Saúde: cuide de sua saúde física e emocional através do equilíbrio e da conexão com a energia vital. Passado: você passou por momentos de clareza, sucesso e realização pessoal. Futuro: você experimentará momentos de sucesso, vitalidade e felicidade. Aprenda a celebrar suas conquistas e a agradecer pelas bênçãos da vida. Desenvolva a capacidade de ver a beleza e a alegria em todos os aspectos da vida. Cultive a energia vital, a autoexpressão e a criatividade em sua jornada pessoal e espiritual. Encontre força e inspiração na conexão com a luz do sol e com sua própria luz interior. Lembre-se de que a verdadeira felicidade e realização vêm de dentro e são expressas através da ação consciente e amorosa. Encontre equilíbrio e harmonia em todos os aspectos da vida, honrando sua própria luz e a luz dos outros.'
+    },
+    {
+        name: 'O Aeon',
+        imagePath: 'crowley/20.jpeg',
+        interpretation:
+            'Amor: este é um momento de transformação e renovação nos relacionamentos. Saúde: cuide de sua saúde física e emocional através de mudanças conscientes e crescimento pessoal. Passado: você passou por momentos de transformação e renascimento que moldaram sua jornada pessoal. Futuro: você enfrentará situações que exigem adaptação, mudança e renovação. Aprenda a abraçar a mudança e a transformação como oportunidades para o crescimento pessoal e espiritual. Desenvolva a capacidade de se adaptar e evoluir em resposta às mudanças e desafios da vida. Cultive a sabedoria e a resiliência necessárias para navegar pelas transições e renascimentos da vida. Encontre conforto e orientação na conexão com seu propósito e destino maior. Lembre-se de que a verdadeira transformação vem de dentro e é expressa através da ação consciente e evolutiva. Encontre coragem e força na jornada de renascimento e crescimento constante.'
+    },
+
+    {
+    name: 'O Universo',
+    imagePath: 'crowley/21.jpeg',
+    interpretation:
+        'Amor: este é um momento de completude e realização nos relacionamentos, aproveite a harmonia e o equilíbrio. Saúde: cuide de sua saúde física, mental e emocional, reconhecendo o progresso que você fez e celebrando seu bem-estar. Passado: você passou por um período de crescimento e aprendizado que o levou a um maior entendimento e integração de si mesmo e do mundo ao seu redor. Futuro: você enfrentará situações que trazem a sensação de realização, completude e integração em sua vida. Aprenda a apreciar e agradecer pelas bênçãos e lições da vida. Desenvolva a capacidade de ver o quadro geral e entender o propósito e o significado de sua jornada. Cultive a sabedoria e a compreensão necessárias para integrar todas as experiências e lições de vida. Encontre paz e harmonia na conexão com o universo e seu propósito maior. Lembre-se de que a verdadeira realização e completude vêm de dentro e são expressas através da ação consciente e equilibrada. Encontre alegria e gratidão na dança eterna da vida e no ciclo infinito de crescimento e evolução.'
+},
+];
+
+        function drawCards(num) {
+            const cardsContainer = document.getElementById('cards');
+            cardsContainer.innerHTML = '';
+
+            for (let i = 0; i < num; i++) {
+                const cardIndex = Math.floor(Math.random() * tarotDeck.length);
+                const card = tarotDeck[cardIndex];
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+
+                const cardImage = document.createElement('img');
+                cardImage.src = card.imagePath;
+                cardImage.alt = card.name;
+                cardElement.appendChild(cardImage);
+
+                const cardName = document.createElement('h2');
+                cardName.textContent = card.name;
+                cardElement.appendChild(cardName);
+
+                const cardInterpretation = document.createElement('p');
+                cardInterpretation.textContent = card.interpretation;
+                cardInterpretation.className = 'interpretation';
+                cardElement.appendChild(cardInterpretation);
+
+                cardsContainer.appendChild(cardElement);
+            }
+        }
+    </script>
+</body>
+</html>
+
